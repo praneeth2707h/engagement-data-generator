@@ -46,15 +46,14 @@ from core.user_state_manager   import UserStateManager
 from core.validation_engine    import ValidationEngine
 from models.config_registry    import ConfigRegistry
 from models.simulation_result  import SimulationResult
+from utils.canonical_schema    import TRIGGER_FILE_REQUIRED_COLUMNS
 from utils.exceptions          import SimulationError
 from utils.logger              import get_logger
 
 logger = get_logger(__name__)
 
-# Column names the trigger DataFrame must contain
-_TRIGGER_REQUIRED_COLS: frozenset[str] = frozenset(
-    {"Campaign_ID", "User_ID", "Trigger_Name", "Segment"}
-)
+# Column names the trigger DataFrame must contain — sourced from CanonicalSchema (HIGH-001)
+_TRIGGER_REQUIRED_COLS: frozenset[str] = frozenset(TRIGGER_FILE_REQUIRED_COLUMNS)
 
 
 class SimulationOrchestrator:

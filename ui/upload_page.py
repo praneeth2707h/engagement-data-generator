@@ -17,11 +17,16 @@ from ui.state import (
     get_trigger_df, set_trigger_df,
     get_historical_df, set_historical_df,
 )
+from utils.canonical_schema import (
+    TRIGGER_FILE_REQUIRED_COLUMNS,
+    HISTORICAL_FILE_REQUIRED_COLUMNS,
+)
 
 logger = logging.getLogger(__name__)
 
-_TRIGGER_REQUIRED_COLS = {"Campaign_ID", "User_ID", "Trigger_Name", "Segment"}
-_HISTORICAL_REQUIRED_COLS = {"user_id", "campaign_id"}
+# HIGH-001/HIGH-002: column sets now sourced from CanonicalSchema
+_TRIGGER_REQUIRED_COLS = set(TRIGGER_FILE_REQUIRED_COLUMNS)
+_HISTORICAL_REQUIRED_COLS = set(HISTORICAL_FILE_REQUIRED_COLUMNS)
 
 
 def _read_upload(uploaded_file) -> pd.DataFrame | None:
@@ -29,9 +34,9 @@ def _read_upload(uploaded_file) -> pd.DataFrame | None:
     name = uploaded_file.name.lower()
     try:
         if name.endswith(".csv"):
-            return pd.read_csv(uploaded_file)
+            return pd.read_csv(uploaded_file, dtype=str)
         elif name.endswith((".xlsx", ".xls")):
-            return pd.read_excel(uploaded_file)
+            return pd.read_excel(uploaded_file, dtype=str)
         else:
             st.error(f"Unsupported file type: {uploaded_file.name}. Upload CSV or Excel.")
             return None

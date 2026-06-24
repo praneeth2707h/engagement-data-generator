@@ -17,6 +17,7 @@ from datetime import date
 from pathlib import Path
 from typing import Any
 
+from utils.canonical_schema import historical_file_has_extended_schema
 from utils.logger import get_logger
 from utils.exceptions import InputValidationError
 from utils.schema_validator import (
@@ -161,6 +162,20 @@ def load_historical_file(
         df["Campaign_ID"] = df["Campaign_ID"].fillna("Default")
 
     validate_required_columns(df, HISTORICAL_FILE_REQUIRED_COLUMNS, file_path.name)
+
+    # HIGH-005: detect extended 8-column historical schema (Wave 1 detection only;
+    # Wave 3 will consume the extra columns for state reconstruction)
+    if historical_file_has_extended_schema(df):
+        logger.info(
+            "%s: extended historical schema detected (Ad_Name, Journey_Step, "
+            "Trigger_Name, Completion_Date present).",
+            file_path.name,
+        )
+    else:
+        logger.info(
+            "%s: standard 4-column historical schema detected.",
+            file_path.name,
+        )
 
     # Parse date
     df["Date"] = pd.to_datetime(df["Date"]).dt.date

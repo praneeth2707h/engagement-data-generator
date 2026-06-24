@@ -11,6 +11,10 @@ References
 """
 from __future__ import annotations
 import pandas as pd
+from utils.canonical_schema import (
+    TRIGGER_FILE_REQUIRED_COLUMNS,
+    HISTORICAL_FILE_REQUIRED_COLUMNS,
+)
 from utils.exceptions import InputValidationError
 from utils.logger import get_logger
 
@@ -29,14 +33,9 @@ QUALIFYING_ACTIONS: dict[str, set[str]] = {
     "WhatsApp":              {"Open", "Click"},
 }
 
-# Required columns for each input file type
-TRIGGER_FILE_REQUIRED_COLUMNS: list[str] = [
-    "User_ID", "Trigger_Name", "Trigger_Date", "Segment",
-]
-
-HISTORICAL_FILE_REQUIRED_COLUMNS: list[str] = [
-    "User_ID", "Date", "Action", "Channel",
-]
+# TRIGGER_FILE_REQUIRED_COLUMNS and HISTORICAL_FILE_REQUIRED_COLUMNS are
+# imported from utils.canonical_schema (HIGH-001). Re-exported via __all__
+# for backward compatibility with existing importers.
 
 USER_STATE_REQUIRED_COLUMNS: list[str] = [
     "campaign_id", "user_id", "eligibility_status", "journey_status",
